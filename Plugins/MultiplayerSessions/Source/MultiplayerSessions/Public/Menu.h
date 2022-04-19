@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "MultiplayerSessionsSubsystem.h"
+
 #include "Menu.generated.h"
 
 /**
@@ -16,7 +18,7 @@ class MULTIPLAYERSESSIONS_API UMenu : public UUserWidget
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintCallable)
-	void MenuSetup(int32 NumberOfPublicConnections = 4, FString TypeOfMatch = FString(TEXT("FreeForAll")));
+	void MenuSetup(FMultiplayerSessionSettings MpSessionSettings, FString LobbyPath = FString(TEXT("/Game/ThirdPerson/Maps/Lobby")));
 
 protected:
 
@@ -40,16 +42,22 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* JoinButton;
 
+	UPROPERTY(meta = (BindWidget))
+	UButton* StartButton;
+
 	UFUNCTION()
 	void HostButtonClicked();
 
 	UFUNCTION()
-	void JoinButtonClicked();
+	void JoinButtonClicked();	
+	
+	UFUNCTION()
+	void StartButtonClicked();
 
 	void MenuTearDown();
 
 	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
 
-	int32 NumPublicConnections{4};
-	FString MatchType{TEXT("FreeForAll")};
+	FMultiplayerSessionSettings SessionSettings;
+	FString PathToLobby{ TEXT("") };
 };

@@ -14,6 +14,28 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FMultiplayerOnJoinSessionComplete, EOnJoinSe
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnDestroySessionComplete, bool, bWasSuccessful);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnStartSessionComplete, bool, bWasSuccessful);
 
+USTRUCT(BlueprintType)
+struct FMultiplayerSessionSettings
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString MatchType = FString(TEXT("FreeForAll"));
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 NumPublicConnections = 4;
+
+	FMultiplayerSessionSettings(){}
+
+	FMultiplayerSessionSettings(const FString& MatchType)
+		: MatchType(MatchType)
+	{}
+
+	FMultiplayerSessionSettings(const FString& MatchType, const int32& NumPublicConnections)
+		: MatchType(MatchType), NumPublicConnections(NumPublicConnections)
+	{}
+};
+
 /**
  * 
  */
@@ -24,7 +46,7 @@ class MULTIPLAYERSESSIONS_API UMultiplayerSessionsSubsystem : public UGameInstan
 public:
 	UMultiplayerSessionsSubsystem();
 
-	void CreateSession(int32 NumPublicConnections, FString MatchType);
+	void CreateSession(FMultiplayerSessionSettings SessionSettings);
 	void FindSessions(int32 MaxSearchResults);
 	void JoinSession(const FOnlineSessionSearchResult& SessionResult);
 	void DestroySession();
@@ -59,4 +81,7 @@ private:
 	FDelegateHandle DestroySessionCompleteDelegateHandle;
 	FOnStartSessionCompleteDelegate StartSessionCompleteDelegate;
 	FDelegateHandle StartSessionCompleteDelegateHandle;
+
+	bool bCreateSessionOnDestroy{ false };
+	FMultiplayerSessionSettings LastSessionSettingsAttempt;
 };
